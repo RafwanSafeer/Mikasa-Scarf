@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #000000;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #000000;
+        }
+
+        /* Hide video controls for cleaner look, but keep them accessible */
+        video::-webkit-media-controls {
+            display: flex !important;
+        }
+    </style>
+</head>
+<body>
+    <video 
+        id="videoPlayer"
+        autoplay 
+        playsinline
+        controls
+        loop
+    >
+        <source src="1229.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <script>
+        // Get video element
+        const video = document.getElementById('videoPlayer');
+
+        // Try to autoplay with audio immediately
+        video.addEventListener('loadeddata', function() {
+            video.play().catch(function(error) {
+                // If autoplay with sound is blocked, try muted autoplay
+                video.muted = true;
+                video.play().then(function() {
+                    // Once playing, try to unmute
+                    video.muted = false;
+                }).catch(function(err) {
+                    console.log('Autoplay blocked. User interaction required.');
+                });
+            });
+        });
+
+        // Also try to play immediately when page loads
+        window.addEventListener('load', function() {
+            video.play().catch(function(error) {
+                // If autoplay with sound is blocked, try muted autoplay
+                video.muted = true;
+                video.play().then(function() {
+                    // Once playing, try to unmute
+                    video.muted = false;
+                }).catch(function(err) {
+                    console.log('Autoplay blocked. User interaction required.');
+                });
+            });
+        });
+
+        // Enable fullscreen on click (optional enhancement)
+        video.addEventListener('click', function() {
+            if (video.requestFullscreen) {
+                video.requestFullscreen();
+            } else if (video.webkitRequestFullscreen) {
+                video.webkitRequestFullscreen();
+            } else if (video.mozRequestFullScreen) {
+                video.mozRequestFullScreen();
+            } else if (video.msRequestFullscreen) {
+                video.msRequestFullscreen();
+            }
+        });
+
+        // Auto-unmute on any user interaction (fallback)
+        document.addEventListener('click', function() {
+            if (video.muted) {
+                video.muted = false;
+            }
+        }, { once: true });
+
+        document.addEventListener('touchstart', function() {
+            if (video.muted) {
+                video.muted = false;
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
+
